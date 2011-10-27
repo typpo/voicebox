@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Press the button to record."
+        android:textSize="36px"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnMain"
+        android:layout_width="172dp"
+        android:layout_height="105dp"
+        android:text="Record" android:clickable="true" android:onClick="MainButtonClick"/>
+
+</LinearLayout>
