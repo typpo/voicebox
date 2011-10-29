@@ -2,7 +2,7 @@ package com.typpo.voicebox;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -21,12 +21,11 @@ public class Audio {
 	}
 
 	public String StartRecording() {
-		java.util.Date date = new java.util.Date();
-		// TODO human readable date
-		DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		Date date = new java.util.Date();
+		String humanstr = DateFormat.getDateTimeInstance().format(new Date());
 		String path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath()
-				+ "/" + date.getTime() + "_" + df.format(date) + ".3gp";
+				+ "/" + date.getTime() + "_" + humanstr + ".3gp";
 		mRecorder.setOutputFile(path);
 
 		try {
