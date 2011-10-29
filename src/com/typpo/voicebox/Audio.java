@@ -15,7 +15,6 @@ public class Audio {
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		java.util.Date date = new java.util.Date();
-		// TODO human readable date
 		String path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath()
 				+ "/voicebox" + date.getTime() + ".3gp";
