@@ -33,7 +33,6 @@ public class VoiceBoxActivity extends Activity {
 	public void Init() {
 		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-		mAudio = new Audio();
 	}
 
 	public void MainButtonClick(View v) {
@@ -45,6 +44,7 @@ public class VoiceBoxActivity extends Activity {
 
 		Button b = (Button) v;
 		if (!mRecording) {
+			mAudio = new Audio();
 			mLastFilePath = mAudio.StartRecording();
 			mRecording = true;
 			b.setText("Stop Recording");
