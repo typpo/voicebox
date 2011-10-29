@@ -1,0 +1,14 @@
+package com.typpo.voicebox;
+
+import com.dropbox.client2.session.Session.AccessType;
+
+public class Constants {
+
+	final static public String APP_KEY = "";
+	final static public String APP_SECRET = "";
+	final static public AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
+
+	final static public String ACCOUNT_PREFS_NAME = "";
+	final static public String ACCESS_KEY_NAME = "";
+	final static public String ACCESS_SECRET_NAME = "";
+}
