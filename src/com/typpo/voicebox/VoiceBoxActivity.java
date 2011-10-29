@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
@@ -29,6 +30,11 @@ public class VoiceBoxActivity extends Activity {
 		setContentView(R.layout.main);
 	}
 
+	public void Init() {
+		AndroidAuthSession session = buildSession();
+		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+	}
+
 	public void MainButtonClick(View v) {
 		if (!mDBApi.getSession().isLinked()) {
 			toast("Please link your Dropbox account first.");
@@ -41,24 +47,20 @@ public class VoiceBoxActivity extends Activity {
 			mAudio = new Audio();
 			mLastFilePath = mAudio.StartRecording();
 			mRecording = true;
+
+			((Button) v).setText("Stop Recording");
 		} else {
 			toast("Stopping recording");
 			mAudio.StopRecording();
 			mRecording = false;
 			Upload("/", mLastFilePath);
+
+			((Button) v).setText("Start Recording");
 		}
 	}
 
 	public void AuthenticateButtonClick(View v) {
 		Authenticate(this);
-	}
-
-	public void Init() {
-		AppKeyPair appKeys = new AppKeyPair(Constants.APP_KEY,
-				Constants.APP_SECRET);
-		AndroidAuthSession session = new AndroidAuthSession(appKeys,
-				Constants.ACCESS_TYPE);
-		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 	}
 
 	public void Authenticate(Activity a) {
@@ -120,6 +122,46 @@ public class VoiceBoxActivity extends Activity {
 		edit.putString(Constants.ACCESS_KEY_NAME, key);
 		edit.putString(Constants.ACCESS_SECRET_NAME, secret);
 		edit.commit();
+	}
+
+	/**
+	 * Shows keeping the access keys returned from Trusted Authenticator in a
+	 * local store, rather than storing user name & password, and
+	 * re-authenticating each time (which is not to be done, ever).
+	 * 
+	 * @return Array of [access_key, access_secret], or null if none stored
+	 */
+	private String[] getKeys() {
+		SharedPreferences prefs = getSharedPreferences(
+				Constants.ACCOUNT_PREFS_NAME, 0);
+		String key = prefs.getString(Constants.ACCESS_KEY_NAME, null);
+		String secret = prefs.getString(Constants.ACCESS_SECRET_NAME, null);
+		if (key != null && secret != null) {
+			String[] ret = new String[2];
+			ret[0] = key;
+			ret[1] = secret;
+			return ret;
+		} else {
+			return null;
+		}
+	}
+
+	private AndroidAuthSession buildSession() {
+		AppKeyPair appKeyPair = new AppKeyPair(Constants.APP_KEY,
+				Constants.APP_SECRET);
+		AndroidAuthSession session;
+
+		String[] stored = getKeys();
+		if (stored != null) {
+			AccessTokenPair accessToken = new AccessTokenPair(stored[0],
+					stored[1]);
+			session = new AndroidAuthSession(appKeyPair, Constants.ACCESS_TYPE,
+					accessToken);
+		} else {
+			session = new AndroidAuthSession(appKeyPair, Constants.ACCESS_TYPE);
+		}
+
+		return session;
 	}
 
 	private void toast(String msg) {
