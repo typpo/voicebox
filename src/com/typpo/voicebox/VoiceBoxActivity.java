@@ -33,6 +33,7 @@ public class VoiceBoxActivity extends Activity {
 	public void Init() {
 		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+		mAudio = new Audio();
 	}
 
 	public void MainButtonClick(View v) {
@@ -42,20 +43,19 @@ public class VoiceBoxActivity extends Activity {
 			return;
 		}
 
+		Button b = (Button) v;
 		if (!mRecording) {
-			toast("Starting recording");
-			mAudio = new Audio();
+			b.setText("Loading...");
 			mLastFilePath = mAudio.StartRecording();
 			mRecording = true;
-
-			((Button) v).setText("Stop Recording");
+			toast("Starting recording");
+			b.setText("Stop Recording");
 		} else {
-			toast("Stopping recording");
 			mAudio.StopRecording();
 			mRecording = false;
 			Upload("/", mLastFilePath);
 
-			((Button) v).setText("Start Recording");
+			b.setText("Start Recording");
 		}
 	}
 
@@ -69,8 +69,7 @@ public class VoiceBoxActivity extends Activity {
 	}
 
 	public void Upload(String filename, String path) {
-		toast("Uploading " + filename);
-
+		toast("Uploading...");
 		Uploader u = new Uploader(this, mDBApi, filename, new File(path));
 		u.execute();
 		/*

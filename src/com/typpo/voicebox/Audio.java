@@ -9,23 +9,23 @@ import android.util.Log;
 
 public class Audio {
 	private MediaRecorder mRecorder;
-	private AudioRecord mAudio;
+
+	// private AudioRecord mAudio;
 
 	public Audio() {
-
-	}
-
-	public String StartRecording() {
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+	}
+
+	public String StartRecording() {
 		java.util.Date date = new java.util.Date();
 		// TODO human readable date
 		String path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath()
 				+ "/voicebox" + date.getTime() + ".3gp";
 		mRecorder.setOutputFile(path);
-		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		try {
 			mRecorder.prepare();

@@ -72,7 +72,7 @@ public class Uploader extends AsyncTask<Void, Long, Boolean> {
 
 		mDialog = new ProgressDialog(context);
 		mDialog.setMax(100);
-		mDialog.setMessage("Uploading " + file.getName());
+		mDialog.setMessage("Uploading...");
 		mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mDialog.setProgress(0);
 		mDialog.setButton("Cancel", new OnClickListener() {
