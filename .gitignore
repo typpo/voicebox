@@ -1,5 +1,5 @@
 bin/
 AndroidManifest.xml
-src/com.typpo.voicebox/Constants.java
+src/com/typpo/voicebox/Constants.java
 *~
 *.swp

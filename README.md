@@ -1,4 +1,4 @@
-Crappy Android app that syncs voice notes with your Dropbox account. 
+Crappy Android app that syncs voice notes with your Dropbox account. Today I wrote my first native Android application.
 
 Would be nice to have:
 - Human readable dates
