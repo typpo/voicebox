@@ -45,10 +45,8 @@ public class VoiceBoxActivity extends Activity {
 
 		Button b = (Button) v;
 		if (!mRecording) {
-			b.setText("Loading...");
 			mLastFilePath = mAudio.StartRecording();
 			mRecording = true;
-			toast("Starting recording");
 			b.setText("Stop Recording");
 		} else {
 			mAudio.StopRecording();
