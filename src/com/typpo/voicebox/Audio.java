@@ -1,28 +1,30 @@
 package com.typpo.voicebox;
 
-import java.io.File;
 import java.io.IOException;
 
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
 
 public class Audio {
 	private MediaRecorder mRecorder;
+	private AudioRecord mAudio;
 
 	public Audio() {
 
 	}
 
-	public void Start() {
-		File fd = Environment.getExternalStorageDirectory();
+	public String StartRecording() {
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		java.util.Date date = new java.util.Date();
 		// TODO human readable date
-		mRecorder.setOutputFile(fd.getAbsolutePath() + "/voicebox"
-				+ date.getTime() + ".3gp");
+		String path = Environment.getExternalStorageDirectory()
+				.getAbsolutePath()
+				+ "/voicebox" + date.getTime() + ".3gp";
+		mRecorder.setOutputFile(path);
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		try {
@@ -32,9 +34,24 @@ public class Audio {
 		}
 
 		mRecorder.start();
+		return path;
+
+		/*
+		 * int sampleRate = AudioTrack
+		 * .getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM); int
+		 * bufferSize = AudioRecord.getMinBufferSize(sampleRate,
+		 * AudioFormat.CHANNEL_CONFIGURATION_MONO,
+		 * AudioFormat.ENCODING_PCM_16BIT);
+		 * 
+		 * AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+		 * 44100, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT,
+		 * bufferSize);
+		 * 
+		 * recorder.startRecording();
+		 */
 	}
 
-	public void Stop() {
+	public void StopRecording() {
 		mRecorder.stop();
 		mRecorder.release();
 		mRecorder = null;
