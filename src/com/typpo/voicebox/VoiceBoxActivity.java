@@ -18,9 +18,9 @@ import com.dropbox.client2.session.AppKeyPair;
 public class VoiceBoxActivity extends Activity {
 
 	private DropboxAPI<AndroidAuthSession> mDBApi;
-	private Audio mAudio;
 	private boolean mRecording;
 	private String mLastFilePath;
+	private Audio mAudio;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

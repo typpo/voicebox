@@ -11,18 +11,14 @@ import android.util.Log;
 public class Audio {
 	private MediaRecorder mRecorder;
 
-	// private AudioRecord mAudio;
-
-	public Audio() {
+	public String StartRecording() {
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-	}
 
-	public String StartRecording() {
-		Date date = new java.util.Date();
-		String humanstr = DateFormat.getDateTimeInstance().format(new Date());
+		Date date = new Date();
+		String humanstr = DateFormat.getDateInstance().format(date);
 		String path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath()
 				+ "/" + date.getTime() + "_" + humanstr + ".3gp";
