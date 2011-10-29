@@ -17,7 +17,7 @@ public class Audio {
 
 	public String StartRecording() {
 		mRecorder = new MediaRecorder();
-		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		java.util.Date date = new java.util.Date();
 		// TODO human readable date

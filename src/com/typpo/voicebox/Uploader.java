@@ -165,7 +165,8 @@ public class Uploader extends AsyncTask<Void, Long, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		mDialog.dismiss();
 		if (result) {
-			err("Image successfully uploaded");
+			mFile.delete();
+			err("Audio successfully uploaded");
 		} else {
 			err(mErrorMsg);
 		}

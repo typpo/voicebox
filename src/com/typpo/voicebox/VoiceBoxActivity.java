@@ -45,7 +45,7 @@ public class VoiceBoxActivity extends Activity {
 			toast("Stopping recording");
 			mAudio.StopRecording();
 			mRecording = false;
-			Upload("test.3gp", mLastFilePath);
+			Upload("/", mLastFilePath);
 		}
 	}
 
@@ -69,8 +69,8 @@ public class VoiceBoxActivity extends Activity {
 	public void Upload(String filename, String path) {
 		toast("Uploading " + filename);
 
-		Uploader u = new Uploader(this.getBaseContext(), mDBApi, filename,
-				new File(path));
+		Uploader u = new Uploader(this, mDBApi, filename, new File(path));
+		u.execute();
 		/*
 		 * File f = new File(path);
 		 * 
