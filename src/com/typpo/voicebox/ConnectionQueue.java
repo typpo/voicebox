@@ -16,7 +16,7 @@ public class ConnectionQueue {
 	private IConnectionCallback mCallback;
 
 	public ConnectionQueue(Activity a, IConnectionCallback cb) {
-		mCurrentState = ConnectionState.DISCONNECTED;
+		mCurrentState = ConnectionState.NULL;
 
 		mConnReceiver = new BroadcastReceiver() {
 			@Override

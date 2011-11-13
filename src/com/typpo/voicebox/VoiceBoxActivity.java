@@ -39,7 +39,8 @@ public class VoiceBoxActivity extends Activity {
 		connection = new ConnectionQueue(this, new IConnectionCallback() {
 			public void StateChanged(ConnectionState cur, ConnectionState prev) {
 				if (cur.equals(ConnectionState.CONNECTED)
-						&& !prev.equals(ConnectionState.CONNECTED)) {
+						&& !prev.equals(ConnectionState.CONNECTED)
+						&& !prev.equals(ConnectionState.NULL)) {
 					UploadAll();
 				}
 			}
