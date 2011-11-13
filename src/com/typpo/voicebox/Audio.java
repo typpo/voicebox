@@ -1,5 +1,6 @@
 package com.typpo.voicebox;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.media.MediaRecorder;
@@ -10,15 +11,24 @@ public class Audio {
 	private MediaRecorder mRecorder;
 
 	public String StartRecording() {
+		if (!Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			return null;
+		}
 
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		java.util.Date date = new java.util.Date();
-		String path = Environment.getExternalStorageDirectory()
+		/*
+		 * String path = Environment.getExternalStorageDirectory()
+		 * .getAbsolutePath() + "/voicebox" + date.getTime() + ".3gp";
+		 */
+		File f = new File(Environment.getExternalStorageDirectory()
 				.getAbsolutePath()
-				+ "/voicebox" + date.getTime() + ".3gp";
-		mRecorder.setOutputFile(path);
+				+ Constants.APP_DIR + "/voicebox" + date.getTime() + ".3gp");
+		f.mkdirs();
+		mRecorder.setOutputFile(f.getAbsolutePath());
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		try {
@@ -28,7 +38,7 @@ public class Audio {
 		}
 
 		mRecorder.start();
-		return path;
+		return f.getAbsolutePath();
 
 		/*
 		 * int sampleRate = AudioTrack

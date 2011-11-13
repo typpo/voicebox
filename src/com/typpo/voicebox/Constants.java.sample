@@ -4,6 +4,9 @@ import com.dropbox.client2.session.Session.AccessType;
 
 public class Constants {
 
+	// Application directory on SD card
+	final static public String APP_DIR = "VoiceBox";
+
 	final static public String APP_KEY = "";
 	final static public String APP_SECRET = "";
 	final static public AccessType ACCESS_TYPE = AccessType.APP_FOLDER;

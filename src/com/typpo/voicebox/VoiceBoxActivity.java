@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ public class VoiceBoxActivity extends Activity {
 	private boolean mRecording;
 	private String mLastFilePath;
 	private Audio mAudio;
+	private ConnectionQueue connection;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,15 @@ public class VoiceBoxActivity extends Activity {
 	public void Init() {
 		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+
+		connection = new ConnectionQueue(this, new IConnectionCallback() {
+			public void StateChanged(ConnectionState cur, ConnectionState prev) {
+				if (cur.equals(ConnectionState.CONNECTED)
+						&& !prev.equals(ConnectionState.CONNECTED)) {
+					UploadAll();
+				}
+			}
+		});
 	}
 
 	public void MainButtonClick(View v) {
@@ -46,6 +57,10 @@ public class VoiceBoxActivity extends Activity {
 		if (!mRecording) {
 			mAudio = new Audio();
 			mLastFilePath = mAudio.StartRecording();
+			if (mLastFilePath == null) {
+				toast("Sorry, there was a problem writing your storage device/SD card.");
+				return;
+			}
 			mRecording = true;
 			b.setText("Stop Recording");
 		} else {
@@ -85,6 +100,23 @@ public class VoiceBoxActivity extends Activity {
 		 */
 	}
 
+	public void UploadAll() {
+		File dir = new File(Environment.getExternalStorageDirectory()
+				.getAbsolutePath()
+				+ Constants.APP_DIR);
+
+		File[] children = dir.listFiles();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				// Get filename of file or directory
+				File f = children[i];
+				if (f.getAbsolutePath().endsWith(".3gp")) {
+					Upload(f.getName(), f.getAbsolutePath());
+				}
+			}
+		}
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -106,11 +138,6 @@ public class VoiceBoxActivity extends Activity {
 		}
 	}
 
-	/**
-	 * Shows keeping the access keys returned from Trusted Authenticator in a
-	 * local store, rather than storing user name & password, and
-	 * re-authenticating each time (which is not to be done, ever).
-	 */
 	private void storeKeys(String key, String secret) {
 		// Save the access key for later
 		SharedPreferences prefs = getSharedPreferences(
@@ -122,10 +149,6 @@ public class VoiceBoxActivity extends Activity {
 	}
 
 	/**
-	 * Shows keeping the access keys returned from Trusted Authenticator in a
-	 * local store, rather than storing user name & password, and
-	 * re-authenticating each time (which is not to be done, ever).
-	 * 
 	 * @return Array of [access_key, access_secret], or null if none stored
 	 */
 	private String[] getKeys() {

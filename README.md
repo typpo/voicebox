@@ -6,3 +6,4 @@ Would be nice to have:
 * Use a folder instead of root of SD card
 * Don't use SD card at all
 * Human readable dates
+* Add "Link account" link below Record button
