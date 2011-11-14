@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,10 +32,11 @@ public class VoiceBoxActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mRecording = false;
-		Init();
-		setContentView(R.layout.main);
 
-		mLink = (TextView) findViewById(R.id.login);
+		setContentView(R.layout.main);
+		mLink = (TextView) findViewById(R.id.lnkLogin);
+
+		Init();
 	}
 
 	public void Init() {
@@ -81,10 +84,10 @@ public class VoiceBoxActivity extends Activity {
 	}
 
 	public void LoginLink(View v) {
-		if (!mDBApi.getSession().isLinked()) {
-			Authenticate(this);
+		if (mDBApi.getSession().isLinked()) {
+			Logout();
 		} else {
-			toast("You are already linked.");
+			Authenticate(this);
 		}
 	}
 
@@ -103,7 +106,6 @@ public class VoiceBoxActivity extends Activity {
 			return;
 		}
 
-		toast("Uploading...");
 		Uploader u = new Uploader(this, mDBApi, filename, new File(path));
 		u.execute();
 		/*
@@ -166,15 +168,20 @@ public class VoiceBoxActivity extends Activity {
 		mDBApi.getSession().unlink();
 		clearKeys();
 
+		toast("Successfully unlinked account.");
 		updateLinkState();
 	}
 
 	private void updateLinkState() {
+		String str;
 		if (mDBApi.getSession().isLinked()) {
-			mLink.setText(Constants.LINK_TEXT);
+			str = Constants.UNLINK_TEXT;
 		} else {
-			mLink.setText(Constants.UNLINK_TEXT);
+			str = Constants.LINK_TEXT;
 		}
+		SpannableString content = new SpannableString(str);
+		content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+		mLink.setText(content);
 	}
 
 	private void storeKeys(String key, String secret) {
