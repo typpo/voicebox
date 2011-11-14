@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
@@ -22,7 +23,8 @@ public class VoiceBoxActivity extends Activity {
 	private boolean mRecording;
 	private String mLastFilePath;
 	private Audio mAudio;
-	private ConnectionWatcher connection;
+	private ConnectionWatcher mConnection;
+	private TextView mLink;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,13 +32,16 @@ public class VoiceBoxActivity extends Activity {
 		mRecording = false;
 		Init();
 		setContentView(R.layout.main);
+
+		mLink = (TextView) findViewById(R.id.login);
 	}
 
 	public void Init() {
 		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+		updateLinkState();
 
-		connection = new ConnectionWatcher(this, new IConnectionCallback() {
+		mConnection = new ConnectionWatcher(this, new IConnectionCallback() {
 			public void StateChanged(ConnectionState cur, ConnectionState prev) {
 				if (cur.equals(ConnectionState.CONNECTED)
 						&& !prev.equals(ConnectionState.CONNECTED)
@@ -46,7 +51,7 @@ public class VoiceBoxActivity extends Activity {
 				}
 			}
 		});
-		connection.Listen();
+		mConnection.Listen();
 	}
 
 	public void MainButtonClick(View v) {
@@ -75,6 +80,14 @@ public class VoiceBoxActivity extends Activity {
 		}
 	}
 
+	public void LoginLink(View v) {
+		if (!mDBApi.getSession().isLinked()) {
+			Authenticate(this);
+		} else {
+			toast("You are already linked.");
+		}
+	}
+
 	public void AuthenticateButtonClick(View v) {
 		Authenticate(this);
 	}
@@ -85,7 +98,7 @@ public class VoiceBoxActivity extends Activity {
 	}
 
 	public void Upload(String filename, String path) {
-		if (!connection.getState().equals(ConnectionState.CONNECTED)) {
+		if (!mConnection.getState().equals(ConnectionState.CONNECTED)) {
 			toast("Couldn't find a data connection, so saving file for upload later...");
 			return;
 		}
@@ -140,9 +153,27 @@ public class VoiceBoxActivity extends Activity {
 				// Provide your own storeKeys to persist the access token pair
 				// A typical way to store tokens is using SharedPreferences
 				storeKeys(tokens.key, tokens.secret);
+
+				// update UI
+				updateLinkState();
 			} catch (IllegalStateException e) {
 				toast("There was a problem authenticating your account.");
 			}
+		}
+	}
+
+	public void Logout() {
+		mDBApi.getSession().unlink();
+		clearKeys();
+
+		updateLinkState();
+	}
+
+	private void updateLinkState() {
+		if (mDBApi.getSession().isLinked()) {
+			mLink.setText(Constants.LINK_TEXT);
+		} else {
+			mLink.setText(Constants.UNLINK_TEXT);
 		}
 	}
 
@@ -153,6 +184,14 @@ public class VoiceBoxActivity extends Activity {
 		Editor edit = prefs.edit();
 		edit.putString(Constants.ACCESS_KEY_NAME, key);
 		edit.putString(Constants.ACCESS_SECRET_NAME, secret);
+		edit.commit();
+	}
+
+	private void clearKeys() {
+		SharedPreferences prefs = getSharedPreferences(
+				Constants.ACCOUNT_PREFS_NAME, 0);
+		Editor edit = prefs.edit();
+		edit.clear();
 		edit.commit();
 	}
 

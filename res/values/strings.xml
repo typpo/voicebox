@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="hello">Hello, Android! I am a string resource!</string>
     <string name="app_name">VoiceBox</string>
+    <string name="link_account"><u>Tap to link your DropBox account</u></string>
+
 </resources>
