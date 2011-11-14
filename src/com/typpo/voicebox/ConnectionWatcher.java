@@ -9,15 +9,20 @@ import android.net.ConnectivityManager;
 
 import com.typpo.voicebox.ConnectionState;
 
-public class ConnectionQueue {
+public class ConnectionWatcher {
 
 	private BroadcastReceiver mConnReceiver;
 	private ConnectionState mCurrentState;
 	private IConnectionCallback mCallback;
+	private Activity mActivity;
 
-	public ConnectionQueue(Activity a, IConnectionCallback cb) {
+	public ConnectionWatcher(Activity a, IConnectionCallback cb) {
+		mActivity = a;
 		mCurrentState = ConnectionState.NULL;
+		mCallback = cb;
+	}
 
+	public void Listen() {
 		mConnReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -37,21 +42,10 @@ public class ConnectionQueue {
 				}
 
 				mCallback.StateChanged(mCurrentState, prev);
-
-				/*
-				 * String reason = intent
-				 * .getStringExtra(ConnectivityManager.EXTRA_REASON);
-				 * 
-				 * NetworkInfo currentNetworkInfo = (NetworkInfo) intent
-				 * .getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-				 * NetworkInfo otherNetworkInfo = (NetworkInfo) intent
-				 * .getParcelableExtra
-				 * (ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-				 */
 			}
 		};
 
-		a.registerReceiver(mConnReceiver, new IntentFilter(
+		mActivity.registerReceiver(mConnReceiver, new IntentFilter(
 				ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 

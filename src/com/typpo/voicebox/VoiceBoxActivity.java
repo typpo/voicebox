@@ -22,7 +22,7 @@ public class VoiceBoxActivity extends Activity {
 	private boolean mRecording;
 	private String mLastFilePath;
 	private Audio mAudio;
-	private ConnectionQueue connection;
+	private ConnectionWatcher connection;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,15 +36,17 @@ public class VoiceBoxActivity extends Activity {
 		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 
-		connection = new ConnectionQueue(this, new IConnectionCallback() {
+		connection = new ConnectionWatcher(this, new IConnectionCallback() {
 			public void StateChanged(ConnectionState cur, ConnectionState prev) {
 				if (cur.equals(ConnectionState.CONNECTED)
 						&& !prev.equals(ConnectionState.CONNECTED)
 						&& !prev.equals(ConnectionState.NULL)) {
+					toast("Detected new connection...");
 					UploadAll();
 				}
 			}
 		});
+		connection.Listen();
 	}
 
 	public void MainButtonClick(View v) {
@@ -59,7 +61,7 @@ public class VoiceBoxActivity extends Activity {
 			mAudio = new Audio();
 			mLastFilePath = mAudio.StartRecording();
 			if (mLastFilePath == null) {
-				toast("Sorry, there was a problem writing your storage device/SD card.");
+				toast("Sorry, there was a problem writing your storage device/SD card. Make sure you have an SD card and it's not mounted on your computer.");
 				return;
 			}
 			mRecording = true;
@@ -83,6 +85,11 @@ public class VoiceBoxActivity extends Activity {
 	}
 
 	public void Upload(String filename, String path) {
+		if (!connection.getState().equals(ConnectionState.CONNECTED)) {
+			toast("Couldn't find a data connection, so saving file for upload later...");
+			return;
+		}
+
 		toast("Uploading...");
 		Uploader u = new Uploader(this, mDBApi, filename, new File(path));
 		u.execute();

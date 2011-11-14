@@ -11,6 +11,7 @@ public class Audio {
 	private MediaRecorder mRecorder;
 
 	public String StartRecording() {
+
 		if (!Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 			return null;
@@ -26,9 +27,14 @@ public class Audio {
 		 */
 		File f = new File(Environment.getExternalStorageDirectory()
 				.getAbsolutePath()
-				+ Constants.APP_DIR + "/voicebox" + date.getTime() + ".3gp");
+				+ Constants.APP_DIR);
 		f.mkdirs();
-		mRecorder.setOutputFile(f.getAbsolutePath());
+
+		String path = f.getAbsolutePath()
+				+ "/"
+				+ android.text.format.DateFormat.format("yyyy-MM-dd_hh-mm-ss",
+						date).toString() + ".3gp";
+		mRecorder.setOutputFile(path);
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
 		try {
@@ -38,7 +44,7 @@ public class Audio {
 		}
 
 		mRecorder.start();
-		return f.getAbsolutePath();
+		return path;
 
 		/*
 		 * int sampleRate = AudioTrack
